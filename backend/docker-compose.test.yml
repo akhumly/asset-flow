@@ -1,0 +1,15 @@
+# docker-compose.test.yml
+version: '3.8'
+services:
+  db_test:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: testdb
+    ports:
+      - '5433:5432' # Expose port 5433 to avoid conflicts
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+volumes:
+  postgres_test_data:

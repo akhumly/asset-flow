@@ -8,6 +8,8 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
 
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('admin')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -19,8 +21,7 @@ export class UsersController {
   }
 
   // GET /users
-  @UseGuards(JwtAuthGuard)
-  @Roles('admin')
+  
   @Get()
   async findAll(): Promise<User[]> {
     return this.usersService.findAll();

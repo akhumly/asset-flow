@@ -5,6 +5,9 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma/prisma.service';
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: '.env.test' });
 
 describe('Authentication (e2e)', () => {
   let app: INestApplication;
@@ -22,7 +25,10 @@ describe('Authentication (e2e)', () => {
   });
 
   afterAll(async () => {
-    await prisma.user.deleteMany({});
+    await prisma.$transaction([
+      prisma.user.deleteMany(),
+      // Add other models if needed
+    ]);
     await app.close();
   });
 
@@ -33,10 +39,12 @@ describe('Authentication (e2e)', () => {
         email: 'test@example.com',
         password: 'password123',
         name: 'Test User',
+        role: 'admin', // Add this line
       })
       .expect(201);
 
     expect(response.body.email).toBe('test@example.com');
+    expect(response.body.role).toBe('admin'); // Add this assertion
   });
 
   it('/auth/login (POST)', async () => {
